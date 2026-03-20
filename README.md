@@ -2,7 +2,14 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+Create a `.env` file in the project root with the following variables:
+
+```env
+ASSISTANT_ID=
+BASE_API_URL=
+```
+
+Then run the development server:
 
 ```bash
 npm run dev

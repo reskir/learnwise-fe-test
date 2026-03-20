@@ -1,8 +1,26 @@
+@import "@mantine/core/styles.css";
+@import "@mantine/dates/styles.css";
+@import "@mantine/notifications/styles.css";
+@import "streamdown/styles.css";
 @import "tailwindcss";
+@source "../node_modules/streamdown/dist/*.js";
+@plugin "@tailwindcss/typography";
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --border: #e5e7eb;
+  --muted: #f3f4f6;
+  --muted-foreground: #6b7280;
+  --accent: #f3f4f6;
+  --accent-foreground: #111827;
+  --primary: #2563eb;
+  --primary-foreground: #ffffff;
+  --card: #ffffff;
+  --card-foreground: #171717;
+  --popover: #ffffff;
+  --popover-foreground: #171717;
+  --radius: 0.5rem;
 }
 
 @theme inline {
@@ -16,6 +34,17 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --border: #374151;
+    --muted: #1f2937;
+    --muted-foreground: #9ca3af;
+    --accent: #1f2937;
+    --accent-foreground: #f9fafb;
+    --primary: #3b82f6;
+    --primary-foreground: #ffffff;
+    --card: #0a0a0a;
+    --card-foreground: #ededed;
+    --popover: #0a0a0a;
+    --popover-foreground: #ededed;
   }
 }
 

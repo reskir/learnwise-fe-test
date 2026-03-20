@@ -9,9 +9,20 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@mantine/core": "^8.3.18",
+    "@mantine/dates": "^8.3.18",
+    "@mantine/form": "^8.3.18",
+    "@mantine/hooks": "^8.3.18",
+    "@mantine/notifications": "^8.3.18",
+    "@tailwindcss/typography": "^0.5.19",
+    "@tanstack/react-query": "^5.91.2",
+    "@types/lodash.debounce": "^4.0.9",
+    "dayjs": "^1.11.20",
+    "lodash.debounce": "^4.0.8",
     "next": "16.2.0",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "streamdown": "^2.5.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -21,6 +32,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.0"
   }
 }
