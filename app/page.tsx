@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
-import { AppShell } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { AppShell, Burger, Button, Group, Badge } from "@mantine/core";
+import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { Navigation } from "@/app/components/Navigation";
 import { GeneratorForm } from "@/app/components/generator/GeneratorForm";
 import { ResultsSidebar } from "@/app/components/generator/ResultsSidebar";
@@ -13,7 +13,8 @@ export default function GeneratorPage() {
   const [streamingContent, setStreamingContent] = useState<string | null>(null);
   const [isStreaming, setIsStreaming] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [asideOpened] = useDisclosure(true);
+  const [asideOpened, { toggle: toggleAside }] = useDisclosure(false);
+  const isMobile = useMediaQuery("(max-width: 62em)");
 
   const handleResult = useCallback((result: QAResponse) => {
     setResults((prev) => [...prev, result]);
@@ -41,11 +42,13 @@ export default function GeneratorPage() {
     }
   }, []);
 
+  const resultCount = results.length + (streamingContent != null ? 1 : 0);
+
   return (
     <AppShell
       header={{ height: 60 }}
       aside={{
-        width: 600,
+        width: { md: 400, lg: 550, xl: 650 },
         breakpoint: "md",
         collapsed: { mobile: !asideOpened, desktop: false },
       }}
@@ -56,6 +59,23 @@ export default function GeneratorPage() {
       </AppShell.Header>
 
       <AppShell.Main>
+        {isMobile && (
+          <Group gap="xs">
+            <Button
+              variant="light"
+              size="xs"
+              onClick={toggleAside}
+              aria-label="Toggle results panel"
+            >
+              Results
+              {resultCount > 0 && (
+                <Badge size="xs" circle ml={4}>
+                  {resultCount}
+                </Badge>
+              )}
+            </Button>
+          </Group>
+        )}
         <GeneratorForm
           onResult={handleResult}
           onStreamChunk={handleStreamChunk}
@@ -67,6 +87,16 @@ export default function GeneratorPage() {
       </AppShell.Main>
 
       <AppShell.Aside>
+        {isMobile && (
+          <Group justify="flex-end" p="xs">
+            <Burger
+              opened={asideOpened}
+              onClick={toggleAside}
+              size="sm"
+              aria-label="Close results panel"
+            />
+          </Group>
+        )}
         <ResultsSidebar
           results={results}
           streamingContent={streamingContent}

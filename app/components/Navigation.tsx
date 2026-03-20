@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Group, Text, UnstyledButton } from "@mantine/core";
@@ -9,7 +10,11 @@ const links = [
   { href: "/generations", label: "Generations" },
 ];
 
-export function Navigation() {
+type NavigationProps = {
+  children?: ReactNode;
+};
+
+export function Navigation({ children }: NavigationProps) {
   const pathname = usePathname();
 
   return (
@@ -20,10 +25,10 @@ export function Navigation() {
         justify="space-between"
         className="border-b border-gray-200"
       >
-        <Text fw={700} size="lg">
-          LearnWise Quiz
-        </Text>
         <Group gap="sm">
+          <Text fw={700} size="lg">
+            LearnWise Quiz
+          </Text>
           {links.map((link) => (
             <UnstyledButton
               key={link.href}
@@ -44,6 +49,7 @@ export function Navigation() {
             </UnstyledButton>
           ))}
         </Group>
+        {children}
       </Group>
     </nav>
   );
