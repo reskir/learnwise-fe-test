@@ -211,20 +211,16 @@ const STREAM_CHUNKS = [
 const RAW_STREAM = STREAM_CHUNKS.join("");
 
 // Expected markdown output — properly structured with line breaks.
+// Table rows use \n (not \n\n) between them to match standard markdown.
 const EXPECTED_MARKDOWN = `# FAQ **Q:** How do I test streaming? **A:** Send a request to \`/temporary/qa-stream\` and watch the chunks flow in real-time. Use \`curl -N\` or any HTTP client with streaming support. Each chunk will arrive as a separate event in NDJSON format. **Q:** What's the ideal chunk size? **A:** It depends on your latency requirements and network conditions. Smaller chunks (512-1024 bytes) provide faster initial response but higher overhead. **Q:** How do I handle disconnections? **A:** Implement exponential backoff and resume tokens. The server will log disconnection events for debugging.
 
 ### Comparison Table
 
 | Approach | Latency | Throughput | Complexity | Use Case |
-
 |----------|---------|------------|------------|----------|
-
 | Streaming | Low | High | Medium | Real-time UIs |
-
 | Batching | Medium | Very High | Low | Bulk processing |
-
 | Polling | High | Low | Low | Simple clients |
-
 | WebSocket | Very Low | High | High | Bidirectional |
 
 ### Latency Calculation Expected end-to-end latency: $L_{total} = L_{network} + L_{processing} + \\frac{S_{response}}{B_{bandwidth}}$ Where $L_{total}$ is total latency, $L_{network}$ is network round-trip time, $L_{processing}$ is server processing time, $S_{response}$ is response size, and $B_{bandwidth}$ is available bandwidth. _Enjoy building amazing streaming experiences!_`;
@@ -506,13 +502,13 @@ describe("appendStreamToken", () => {
     expect(appendStreamToken("some text", " ###")).toBe("some text\n\n###");
   });
 
-  it("prepends newlines before table row start (after row-ending pipe)", () => {
+  it("uses single newline between table rows", () => {
     expect(appendStreamToken("| col1 | col2 |", " |")).toBe(
-      "| col1 | col2 |\n\n|"
+      "| col1 | col2 |\n|"
     );
   });
 
-  it("prepends newlines for first table row after non-table content", () => {
+  it("prepends double newline for first table row after non-table content", () => {
     expect(appendStreamToken("### Table", " |")).toBe("### Table\n\n|");
   });
 
@@ -530,6 +526,14 @@ describe("appendStreamToken", () => {
 
   it("prepends newlines before unordered list items", () => {
     expect(appendStreamToken("text", " - item")).toBe("text\n\n- item");
+  });
+
+  it("handles bare dash as list marker (space in next token)", () => {
+    expect(appendStreamToken("## Title", " -")).toBe("## Title\n\n-");
+  });
+
+  it("uses single newline between consecutive unordered list items", () => {
+    expect(appendStreamToken("- first item", " -")).toBe("- first item\n-");
   });
 
   it("prepends newlines before code fences", () => {
@@ -584,7 +588,7 @@ describe("parseStreamToMarkdown (full FAQ)", () => {
       "\n\n| Approach | Latency | Throughput | Complexity | Use Case |"
     );
     expect(markdown).toContain(
-      "\n\n| Streaming | Low | High | Medium | Real-time UIs |"
+      "\n| Streaming | Low | High | Medium | Real-time UIs |"
     );
   });
 

@@ -87,7 +87,8 @@ export const GeneratorForm = ({
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
-            buffer += decoder.decode(value, { stream: true });
+            const chunk = decoder.decode(value, { stream: true });
+            buffer += chunk;
             const { tokens, remaining } = parseJsonBuffer(buffer);
             for (const t of tokens) {
               accumulated = appendStreamToken(accumulated, t);
