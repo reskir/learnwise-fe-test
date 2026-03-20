@@ -7,7 +7,7 @@ import { Group, Text, UnstyledButton } from "@mantine/core";
 
 const links = [
   { href: "/", label: "Generator" },
-  { href: "/generations", label: "Generations" },
+  { href: "/generations", label: "History" },
 ];
 
 type NavigationProps = {
@@ -23,31 +23,57 @@ export function Navigation({ children }: NavigationProps) {
         h={60}
         px="md"
         justify="space-between"
-        className="border-b border-gray-200"
+        style={{
+          borderBottom: "1px solid var(--border)",
+          background: "var(--card)",
+        }}
       >
-        <Group gap="sm">
-          <Text fw={700} size="lg">
-            LearnWise Quiz
+        <Group gap="xs">
+          <Text
+            fw={800}
+            size="md"
+            style={{
+              letterSpacing: "-0.02em",
+              color: "var(--primary)",
+            }}
+          >
+            LearnWise
           </Text>
-          {links.map((link) => (
-            <UnstyledButton
-              key={link.href}
-              component={Link}
-              href={link.href}
-              px="md"
-              py="xs"
-              className={`rounded-md transition-colors ${
-                pathname === link.href
-                  ? "bg-blue-100 text-blue-700"
-                  : "hover:bg-gray-100"
-              }`}
-              aria-current={pathname === link.href ? "page" : undefined}
-            >
-              <Text size="sm" fw={500}>
+          <Text
+            fw={400}
+            size="md"
+            c="dimmed"
+            style={{ letterSpacing: "-0.01em" }}
+          >
+            Quiz
+          </Text>
+
+          <Group gap={4} ml="md">
+            {links.map((link) => (
+              <UnstyledButton
+                key={link.href}
+                component={Link}
+                href={link.href}
+                px="sm"
+                py={6}
+                style={{
+                  borderRadius: "var(--radius)",
+                  fontSize: 13,
+                  fontWeight: pathname === link.href ? 600 : 500,
+                  color: pathname === link.href
+                    ? "var(--primary)"
+                    : "var(--muted-foreground)",
+                  background: pathname === link.href
+                    ? "var(--primary-light)"
+                    : "transparent",
+                  transition: "all 0.15s ease",
+                }}
+                aria-current={pathname === link.href ? "page" : undefined}
+              >
                 {link.label}
-              </Text>
-            </UnstyledButton>
-          ))}
+              </UnstyledButton>
+            ))}
+          </Group>
         </Group>
         {children}
       </Group>

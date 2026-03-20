@@ -7,20 +7,23 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --border: #e5e7eb;
-  --muted: #f3f4f6;
-  --muted-foreground: #6b7280;
-  --accent: #f3f4f6;
-  --accent-foreground: #111827;
-  --primary: #2563eb;
+  --background: #fafaf9;
+  --foreground: #1c1917;
+  --border: #e7e5e4;
+  --muted: #f5f5f4;
+  --muted-foreground: #78716c;
+  --accent: #f5f5f4;
+  --accent-foreground: #1c1917;
+  --primary: #b45309;
+  --primary-light: #fef3c7;
   --primary-foreground: #ffffff;
   --card: #ffffff;
-  --card-foreground: #171717;
+  --card-foreground: #1c1917;
   --popover: #ffffff;
-  --popover-foreground: #171717;
-  --radius: 0.5rem;
+  --popover-foreground: #1c1917;
+  --radius: 0.75rem;
+  --stream-glow: rgba(180, 83, 9, 0.15);
+  --stream-border: #d97706;
 }
 
 @theme inline {
@@ -32,24 +35,124 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --border: #374151;
-    --muted: #1f2937;
-    --muted-foreground: #9ca3af;
-    --accent: #1f2937;
-    --accent-foreground: #f9fafb;
-    --primary: #3b82f6;
+    --background: #0c0a09;
+    --foreground: #fafaf9;
+    --border: #292524;
+    --muted: #1c1917;
+    --muted-foreground: #a8a29e;
+    --accent: #1c1917;
+    --accent-foreground: #fafaf9;
+    --primary: #d97706;
+    --primary-light: #451a03;
     --primary-foreground: #ffffff;
-    --card: #0a0a0a;
-    --card-foreground: #ededed;
-    --popover: #0a0a0a;
-    --popover-foreground: #ededed;
+    --card: #1c1917;
+    --card-foreground: #fafaf9;
+    --popover: #1c1917;
+    --popover-foreground: #fafaf9;
+    --stream-glow: rgba(217, 119, 6, 0.2);
+    --stream-border: #f59e0b;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* Streaming pulse animation */
+@keyframes stream-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--stream-glow); }
+  50% { box-shadow: 0 0 16px 4px var(--stream-glow); }
+}
+
+@keyframes stream-border-flow {
+  0% { border-color: var(--stream-border); opacity: 1; }
+  50% { border-color: var(--stream-border); opacity: 0.5; }
+  100% { border-color: var(--stream-border); opacity: 1; }
+}
+
+.stream-card-active {
+  animation: stream-pulse 2s ease-in-out infinite;
+  border-color: var(--stream-border) !important;
+}
+
+/* Dot streaming indicator */
+@keyframes dot-bounce {
+  0%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-4px); }
+}
+
+.streaming-dots span {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--primary);
+  margin: 0 2px;
+  animation: dot-bounce 1.4s ease-in-out infinite;
+}
+.streaming-dots span:nth-child(2) { animation-delay: 0.16s; }
+.streaming-dots span:nth-child(3) { animation-delay: 0.32s; }
+
+/* Result card entrance */
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.result-card-enter {
+  animation: card-enter 0.35s ease-out forwards;
+}
+
+/* Filter chip styles */
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.filter-chip:hover {
+  background: color-mix(in srgb, var(--primary) 15%, transparent);
+}
+.filter-chip svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Section divider with label */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0;
+}
+.section-divider::before,
+.section-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.section-divider span {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted-foreground);
+  white-space: nowrap;
 }

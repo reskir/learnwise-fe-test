@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import {
+  Box,
   Card,
   Stack,
   Text,
@@ -20,7 +21,7 @@ const PAGE_SIZE = 5;
 
 type GenerationsListProps = {
   filters: GenerationsFilters;
-}
+};
 
 export function GenerationsList({ filters }: GenerationsListProps) {
   const [page, setPage] = useState(1);
@@ -29,7 +30,7 @@ export function GenerationsList({ filters }: GenerationsListProps) {
 
   if (filters.assistant_id) queryParams.set("assistant_id", filters.assistant_id);
   if (filters.course_id) queryParams.set("course_id", filters.course_id);
-  if (filters.before_date) queryParams.set("before_date",filters.before_date);
+  if (filters.before_date) queryParams.set("before_date", filters.before_date);
   if (filters.after_date) queryParams.set("after_date", filters.after_date);
 
   const { data: generations, isLoading } = useQuery({
@@ -41,7 +42,6 @@ export function GenerationsList({ filters }: GenerationsListProps) {
     select: (data) => data.generations,
   });
 
-  // Reset page when filters change
   const totalPages = generations ? Math.ceil(generations.length / PAGE_SIZE) : 0;
   const currentPage = Math.min(page, totalPages || 1);
   const paginatedData = generations?.slice(
@@ -59,25 +59,67 @@ export function GenerationsList({ filters }: GenerationsListProps) {
 
   if (!generations?.length) {
     return (
-      <Text c="dimmed" ta="center" py="xl">
-        No generations found.
-      </Text>
+      <Box
+        py="xl"
+        style={{
+          textAlign: "center",
+          border: "2px dashed var(--border)",
+          borderRadius: "var(--radius)",
+          padding: "2rem",
+        }}
+      >
+        <Text size="sm" c="dimmed">
+          No generations found
+        </Text>
+      </Box>
     );
   }
 
   return (
-    <Stack gap="md">
+    <Stack gap="sm">
       {paginatedData?.map((gen, index) => (
-        <Card key={`${gen.date}-${index}`} shadow="sm" padding="md" radius="md" withBorder>
-          <Group justify="space-between" mb="xs">
-            <Group gap="xs">
-              <Badge variant="light">{gen.course_id}</Badge>
-              <Badge variant="light" color="grape">
+        <Card
+          key={`${gen.date}-${index}`}
+          padding="md"
+          radius="md"
+          className="result-card-enter"
+          style={{
+            background: "var(--card)",
+            border: "1px solid var(--border)",
+            animationDelay: `${index * 50}ms`,
+          }}
+        >
+          <Group justify="space-between" mb="xs" wrap="wrap" gap={6}>
+            <Group gap={6}>
+              <Badge
+                size="sm"
+                variant="light"
+                style={{
+                  background: "var(--primary-light)",
+                  color: "var(--primary)",
+                  border: "1px solid color-mix(in srgb, var(--primary) 20%, transparent)",
+                }}
+              >
+                {gen.course_id}
+              </Badge>
+              <Badge
+                size="sm"
+                variant="light"
+                style={{
+                  background: "var(--muted)",
+                  color: "var(--muted-foreground)",
+                  border: "1px solid var(--border)",
+                }}
+              >
                 {gen.assistant_id}
               </Badge>
             </Group>
             <Text size="xs" c="dimmed">
-              {new Date(gen.date).toLocaleDateString()}
+              {new Date(gen.date).toLocaleDateString(undefined, {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
             </Text>
           </Group>
 
@@ -90,12 +132,13 @@ export function GenerationsList({ filters }: GenerationsListProps) {
       ))}
 
       {totalPages > 1 && (
-        <Center>
+        <Center mt="sm">
           <Pagination
             total={totalPages}
             value={currentPage}
             onChange={setPage}
             aria-label="Generations pagination"
+            size="sm"
           />
         </Center>
       )}

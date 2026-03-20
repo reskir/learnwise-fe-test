@@ -1,11 +1,15 @@
 "use client";
 
 import { useRef } from "react";
-import { Button, Stack, Text } from "@mantine/core";
+import { Box, Button, Group, SimpleGrid, Stack, Text } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { createFormContext } from "@mantine/form";
 import { apiJson, apiClient, ApiError } from "@/lib/api/client";
-import { parseJsonBuffer, appendStreamToken } from "@/lib/stream/parseStreamChunks";
+import {
+  parseJsonBuffer,
+  appendStreamToken,
+} from "@/lib/stream/parseStreamChunks";
 import type { QAResponse } from "@/lib/api/types";
 import { AssistantSelect } from "./fields/AssistantSelect";
 import { CourseSelect } from "./fields/CourseSelect";
@@ -19,7 +23,7 @@ export type GeneratorFormValues = {
   prompt: string;
   numQuestions: number;
   isStreamed: boolean;
-}
+};
 
 type GeneratorFormProps = {
   onResult: (result: QAResponse) => void;
@@ -28,7 +32,7 @@ type GeneratorFormProps = {
   onStreamEnd: () => void;
   isGenerating: boolean;
   setIsGenerating: (v: boolean) => void;
-}
+};
 
 export const [FormProvider, useGeneratorFormContext, useGeneratorForm] =
   createFormContext<GeneratorFormValues>();
@@ -42,6 +46,7 @@ export const GeneratorForm = ({
   setIsGenerating,
 }: GeneratorFormProps) => {
   const abortRef = useRef<AbortController | null>(null);
+  const isMobile = useMediaQuery("(max-width: 62em)");
 
   const form = useGeneratorForm({
     initialValues: {
@@ -72,14 +77,17 @@ export const GeneratorForm = ({
           const controller = new AbortController();
           abortRef.current = controller;
 
-          const response = await apiClient(`/chat/temporary/qa-stream${queryParams}`, {
-            method: "POST",
-            body: JSON.stringify({ message: values.prompt }),
-            signal: controller.signal,
-          });
+          const response = await apiClient(
+            `/chat/temporary/qa-stream${queryParams}`,
+            {
+              method: "POST",
+              body: JSON.stringify({ message: values.prompt }),
+              signal: controller.signal,
+            },
+          );
 
           const reader = response.body!.getReader();
-  
+
           const decoder = new TextDecoder();
           let accumulated = "";
           let buffer = "";
@@ -107,7 +115,7 @@ export const GeneratorForm = ({
             {
               method: "POST",
               body: JSON.stringify({ message: values.prompt }),
-            }
+            },
           );
           onResult(result);
         }
@@ -140,28 +148,59 @@ export const GeneratorForm = ({
   return (
     <FormProvider form={form}>
       <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack gap="md">
-          <Text component="h1" size="xl" fw={700}>
-            Quiz Question Generator
-          </Text>
+        <Box
+          style={{
+            background: "var(--card)",
+            border: "1px solid var(--border)",
+            borderRadius: "var(--radius)",
+            padding: isMobile ? "1rem" : "1.5rem",
+          }}
+        >
+          <Stack gap="md">
+            <Text fw={700} size="lg" style={{ letterSpacing: "-0.02em" }}>
+              Generate Quiz Questions
+            </Text>
 
-          <AssistantSelect />
-          <CourseSelect />
-          <PromptInput />
-          <NumQuestionsInput />
-          <StreamToggle />
+            <SimpleGrid cols={isMobile ? 1 : 2} spacing="sm">
+              <AssistantSelect />
+              <CourseSelect />
+            </SimpleGrid>
 
-          <div className="flex gap-2">
-            <Button type="submit" loading={isGenerating} disabled={isGenerating}>
-              Generate
-            </Button>
-            {isGenerating && (
-              <Button variant="outline" color="red" onClick={handleCancel}>
-                Cancel
+            <PromptInput />
+
+            <Group gap="md" align="end" wrap="wrap">
+              <NumQuestionsInput />
+              <StreamToggle />
+            </Group>
+
+            <Group gap="sm" mt={4}>
+              <Button
+                type="submit"
+                loading={isGenerating}
+                disabled={isGenerating}
+                size={isMobile ? "sm" : "md"}
+                style={{
+                  background: "var(--primary)",
+                  borderRadius: "var(--radius)",
+                  fontWeight: 600,
+                }}
+              >
+                Generate
               </Button>
-            )}
-          </div>
-        </Stack>
+              {isGenerating && (
+                <Button
+                  variant="light"
+                  color="red"
+                  size={isMobile ? "sm" : "md"}
+                  onClick={handleCancel}
+                  style={{ borderRadius: "var(--radius)" }}
+                >
+                  Cancel
+                </Button>
+              )}
+            </Group>
+          </Stack>
+        </Box>
       </form>
     </FormProvider>
   );
