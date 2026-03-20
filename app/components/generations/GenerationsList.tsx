@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Box,
   Button,
@@ -27,12 +27,18 @@ type GenerationsListProps = {
 export function GenerationsList({ filters }: GenerationsListProps) {
   const [page, setPage] = useState(1);
 
-  const queryParams = new URLSearchParams();
-
-  if (filters.assistant_id) queryParams.set("assistant_id", filters.assistant_id);
-  if (filters.course_id) queryParams.set("course_id", filters.course_id);
-  if (filters.before_date) queryParams.set("before_date", filters.before_date);
-  if (filters.after_date) queryParams.set("after_date", filters.after_date);
+  const queryString = useMemo(() => {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(filters)) {
+      if (value) params.set(key, value);
+    }
+    return params.toString();
+  }, [
+    filters.assistant_id,
+    filters.course_id,
+    filters.before_date,
+    filters.after_date,
+  ]);
 
   const {
     data: generations,
@@ -44,16 +50,25 @@ export function GenerationsList({ filters }: GenerationsListProps) {
     queryKey: ["generations", filters],
     queryFn: () =>
       apiJson<{ generations: Generation[] }>(
-        `/chat/temporary/generations?${queryParams.toString()}`
+        queryString
+          ? `/chat/temporary/generations?${queryString}`
+          : "/chat/temporary/generations",
       ),
     select: (data) => data.generations,
   });
 
-  const totalPages = generations ? Math.ceil(generations.length / PAGE_SIZE) : 0;
+  const totalPages = useMemo(
+    () => (generations ? Math.ceil(generations.length / PAGE_SIZE) : 0),
+    [generations],
+  );
   const currentPage = Math.min(page, totalPages || 1);
-  const paginatedData = generations?.slice(
-    (currentPage - 1) * PAGE_SIZE,
-    currentPage * PAGE_SIZE
+  const paginatedData = useMemo(
+    () =>
+      generations?.slice(
+        (currentPage - 1) * PAGE_SIZE,
+        currentPage * PAGE_SIZE,
+      ),
+    [generations, currentPage],
   );
 
   if (isLoading) {
@@ -76,7 +91,9 @@ export function GenerationsList({ filters }: GenerationsListProps) {
         }}
       >
         <Text size="sm" c="red" mb="xs">
-          {error instanceof Error ? error.message : "Failed to load generations"}
+          {error instanceof Error
+            ? error.message
+            : "Failed to load generations"}
         </Text>
         <Button variant="light" color="red" size="xs" onClick={() => refetch()}>
           Retry
@@ -125,7 +142,8 @@ export function GenerationsList({ filters }: GenerationsListProps) {
                 style={{
                   background: "var(--primary-light)",
                   color: "var(--primary)",
-                  border: "1px solid color-mix(in srgb, var(--primary) 20%, transparent)",
+                  border:
+                    "1px solid color-mix(in srgb, var(--primary) 20%, transparent)",
                 }}
               >
                 {gen.course_id}
