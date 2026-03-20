@@ -9,7 +9,7 @@ import type { Course } from "@/lib/api/types";
 
 export const CourseSelect = () =>{
   const form = useGeneratorFormContext();
-  const { data: courses } = useQuery({
+  const { data: courses, isError } = useQuery({
     queryKey: ["courses"],
     queryFn: () =>
       apiJson<{ courses: Course[] }>(
@@ -30,6 +30,7 @@ export const CourseSelect = () =>{
       data={selectData}
       required
       aria-required
+      error={isError ? "Failed to load courses" : undefined}
       {...form.getInputProps("course_id")}
     />
   );

@@ -46,6 +46,10 @@ export async function apiClient(
       // body wasn't JSON, use default message
     }
 
+    if (response.status === 401) {
+      window.dispatchEvent(new CustomEvent("auth:expired"));
+    }
+
     throw new ApiError(response.status, errorMessage, errorType, params);
   }
 

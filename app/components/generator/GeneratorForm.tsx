@@ -46,6 +46,7 @@ export const GeneratorForm = ({
   setIsGenerating,
 }: GeneratorFormProps) => {
   const abortRef = useRef<AbortController | null>(null);
+  const streamActiveRef = useRef(false);
   const isMobile = useMediaQuery("(max-width: 62em)");
 
   const form = useGeneratorForm({
@@ -74,6 +75,7 @@ export const GeneratorForm = ({
       if (values.isStreamed) {
         for (let i = 0; i < values.numQuestions; i++) {
           onStreamStart();
+          streamActiveRef.current = true;
           const controller = new AbortController();
           abortRef.current = controller;
 
@@ -107,6 +109,7 @@ export const GeneratorForm = ({
           }
 
           onStreamEnd();
+          streamActiveRef.current = false;
         }
       } else {
         for (let i = 0; i < values.numQuestions; i++) {
@@ -121,6 +124,11 @@ export const GeneratorForm = ({
         }
       }
     } catch (err) {
+      if (streamActiveRef.current) {
+        onStreamEnd();
+        streamActiveRef.current = false;
+      }
+
       if ((err as Error).name === "AbortError") return;
 
       const message =

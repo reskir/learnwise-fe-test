@@ -8,7 +8,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
-import { Center, Loader } from "@mantine/core";
+import { Button, Center, Loader, Stack, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 
 type AuthContextValue = {
@@ -65,10 +65,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     authenticate();
   }, [authenticate]);
 
+  useEffect(() => {
+    const handleExpired = () => {
+      setIsAuthenticated(false);
+      authenticate();
+    };
+    window.addEventListener("auth:expired", handleExpired);
+    return () => window.removeEventListener("auth:expired", handleExpired);
+  }, [authenticate]);
+
   if (loading) {
     return (
       <Center h="100vh">
         <Loader size="lg" aria-label="Authenticating" />
+      </Center>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <Center h="100vh">
+        <Stack align="center" gap="md">
+          <Text fw={700} size="lg">
+            Authentication failed
+          </Text>
+          <Text size="sm" c="dimmed">
+            Unable to sign in. Please try again.
+          </Text>
+          <Button
+            variant="light"
+            onClick={() => {
+              setLoading(true);
+              authenticate();
+            }}
+          >
+            Retry
+          </Button>
+        </Stack>
       </Center>
     );
   }

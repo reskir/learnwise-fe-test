@@ -3,6 +3,7 @@
 import { useState } from "react";
 import {
   Box,
+  Button,
   Card,
   Stack,
   Text,
@@ -33,7 +34,13 @@ export function GenerationsList({ filters }: GenerationsListProps) {
   if (filters.before_date) queryParams.set("before_date", filters.before_date);
   if (filters.after_date) queryParams.set("after_date", filters.after_date);
 
-  const { data: generations, isLoading } = useQuery({
+  const {
+    data: generations,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ["generations", filters],
     queryFn: () =>
       apiJson<{ generations: Generation[] }>(
@@ -54,6 +61,27 @@ export function GenerationsList({ filters }: GenerationsListProps) {
       <Center py="xl">
         <Loader aria-label="Loading generations" />
       </Center>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Box
+        py="xl"
+        style={{
+          textAlign: "center",
+          border: "2px dashed var(--border)",
+          borderRadius: "var(--radius)",
+          padding: "2rem",
+        }}
+      >
+        <Text size="sm" c="red" mb="xs">
+          {error instanceof Error ? error.message : "Failed to load generations"}
+        </Text>
+        <Button variant="light" color="red" size="xs" onClick={() => refetch()}>
+          Retry
+        </Button>
+      </Box>
     );
   }
 

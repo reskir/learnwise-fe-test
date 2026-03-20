@@ -10,7 +10,7 @@ import type { Assistant } from "@/lib/api/types";
 export const AssistantSelect = () => {
   const form = useGeneratorFormContext();
 
-  const { data: assistants } = useQuery({
+  const { data: assistants, isError } = useQuery({
     queryKey: ["assistants"],
     queryFn: () => apiJson<{ assistants: Assistant[] }>("/chat/temporary/assistants"),
     select: (data) => data.assistants,
@@ -28,6 +28,7 @@ export const AssistantSelect = () => {
       data={selectData}
       required
       aria-required
+      error={isError ? "Failed to load assistants" : undefined}
       {...form.getInputProps("assistant_id")}
     />
   );

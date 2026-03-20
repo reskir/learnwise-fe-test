@@ -14,7 +14,7 @@ type ResultsPanelProps = {
 
 function StreamingDots() {
   return (
-    <span className="streaming-dots" style={{ display: "inline-flex", alignItems: "center", gap: 2 }}>
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 2 }}>
       <span />
       <span />
       <span />
@@ -135,7 +135,9 @@ export function ResultsPanel({
               <Card
                 padding="md"
                 radius="md"
-                className={isStreaming ? "stream-card-active" : "result-card-enter"}
+                className={
+                  isStreaming ? "stream-card-active" : "result-card-enter"
+                }
                 style={{
                   background: "var(--card)",
                   border: `1px solid ${isStreaming ? "var(--stream-border)" : "var(--border)"}`,
