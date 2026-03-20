@@ -21,13 +21,21 @@ type GenerationsFiltersProps = {
   onChange: (filters: GenerationsFilters) => void;
 };
 
-function XIcon() {
-  return (
-    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-      <path d="M3 3l6 6M9 3l-6 6" />
-    </svg>
-  );
-}
+const chipStyle: React.CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 4,
+  padding: "4px 10px",
+  borderRadius: 999,
+  fontSize: 12,
+  fontWeight: 500,
+  background: "var(--primary-light)",
+  color: "var(--primary)",
+  border: "1px solid var(--primary-light)",
+  cursor: "pointer",
+  transition: "opacity 0.15s ease",
+  lineHeight: 1.4,
+};
 
 function FilterChips({
   filters,
@@ -40,31 +48,35 @@ function FilterChips({
   courses?: Course[];
   onChange: (filters: GenerationsFilters) => void;
 }) {
-  const chips: { label: string; key: keyof GenerationsFilters }[] = [];
+  const chips = useMemo(() => {
+    const result: { label: string; key: keyof GenerationsFilters }[] = [];
 
-  if (filters.assistant_id) {
-    const name = assistants?.find((a) => a.id === filters.assistant_id)?.name;
-    chips.push({
-      label: name || filters.assistant_id,
-      key: "assistant_id",
-    });
-  }
-  if (filters.course_id) {
-    const name = courses?.find((c) => c.id === filters.course_id)?.name;
-    chips.push({ label: name || filters.course_id, key: "course_id" });
-  }
-  if (filters.after_date) {
-    chips.push({
-      label: `From ${new Date(filters.after_date).toLocaleDateString()}`,
-      key: "after_date",
-    });
-  }
-  if (filters.before_date) {
-    chips.push({
-      label: `Until ${new Date(filters.before_date).toLocaleDateString()}`,
-      key: "before_date",
-    });
-  }
+    if (filters.assistant_id) {
+      const name = assistants?.find((a) => a.id === filters.assistant_id)?.name;
+      result.push({
+        label: name || filters.assistant_id,
+        key: "assistant_id",
+      });
+    }
+    if (filters.course_id) {
+      const name = courses?.find((c) => c.id === filters.course_id)?.name;
+      result.push({ label: name || filters.course_id, key: "course_id" });
+    }
+    if (filters.after_date) {
+      result.push({
+        label: `From ${new Date(filters.after_date).toLocaleDateString()}`,
+        key: "after_date",
+      });
+    }
+    if (filters.before_date) {
+      result.push({
+        label: `Until ${new Date(filters.before_date).toLocaleDateString()}`,
+        key: "before_date",
+      });
+    }
+
+    return result;
+  }, [filters, assistants, courses]);
 
   if (chips.length === 0) return null;
 
@@ -74,19 +86,32 @@ function FilterChips({
         <button
           key={chip.key}
           type="button"
-          className="filter-chip"
+          style={chipStyle}
           onClick={() => onChange({ ...filters, [chip.key]: undefined })}
           aria-label={`Remove filter: ${chip.label}`}
         >
           {chip.label}
-          <XIcon />
+          <svg
+            viewBox="0 0 12 12"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            style={{ width: 12, height: 12, flexShrink: 0 }}
+          >
+            <path d="M3 3l6 6M9 3l-6 6" />
+          </svg>
         </button>
       ))}
       {chips.length > 1 && (
         <button
           type="button"
-          className="filter-chip"
-          style={{ background: "transparent", border: "1px solid var(--border)" }}
+          style={{
+            ...chipStyle,
+            background: "transparent",
+            color: "var(--muted-foreground)",
+            border: "1px solid var(--border)",
+          }}
           onClick={() => onChange({})}
           aria-label="Clear all filters"
         >
@@ -122,26 +147,36 @@ export function GenerationsFiltersPanel({
     [filters],
   );
 
+  const assistantOptions = useMemo(
+    () => assistants?.map((a) => ({ value: a.id, label: a.name })) ?? [],
+    [assistants],
+  );
+
+  const courseOptions = useMemo(
+    () => courses?.map((c) => ({ value: c.id, label: c.name })) ?? [],
+    [courses],
+  );
+
   const filterFields = (
     <SimpleGrid cols={isMobile ? 1 : 2} spacing="sm">
       <Select
         label="Assistant"
         placeholder="All assistants"
         clearable
-        data={assistants?.map((a) => ({ value: a.id, label: a.name })) || []}
+        data={assistantOptions}
         value={filters.assistant_id || null}
         onChange={(v) => onChange({ ...filters, assistant_id: v || undefined })}
-        size={isMobile ? "sm" : "sm"}
+        size="sm"
       />
 
       <Select
         label="Course"
         placeholder="All courses"
         clearable
-        data={courses?.map((c) => ({ value: c.id, label: c.name })) || []}
+        data={courseOptions}
         value={filters.course_id || null}
         onChange={(v) => onChange({ ...filters, course_id: v || undefined })}
-        size={isMobile ? "sm" : "sm"}
+        size="sm"
       />
 
       <DatePickerInput
@@ -155,7 +190,7 @@ export function GenerationsFiltersPanel({
             after_date: v ? new Date(v).toISOString() : undefined,
           })
         }
-        size={isMobile ? "sm" : "sm"}
+        size="sm"
       />
 
       <DatePickerInput
@@ -169,7 +204,7 @@ export function GenerationsFiltersPanel({
             before_date: v ? new Date(v).toISOString() : undefined,
           })
         }
-        size={isMobile ? "sm" : "sm"}
+        size="sm"
       />
     </SimpleGrid>
   );

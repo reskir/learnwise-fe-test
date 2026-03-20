@@ -111,28 +111,6 @@ body {
   animation: card-enter 0.35s ease-out forwards;
 }
 
-/* Filter chip styles */
-.filter-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 500;
-  background: var(--primary-light);
-  color: var(--primary);
-  border: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-.filter-chip:hover {
-  background: color-mix(in srgb, var(--primary) 15%, transparent);
-}
-.filter-chip svg {
-  width: 12px;
-  height: 12px;
-}
 
 /* Section divider with label */
 .section-divider {
