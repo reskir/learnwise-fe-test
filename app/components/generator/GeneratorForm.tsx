@@ -5,7 +5,7 @@ import { Button, Stack, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { createFormContext } from "@mantine/form";
 import { apiJson, apiClient, ApiError } from "@/lib/api/client";
-import { parseJsonBuffer } from "@/lib/stream/parseStreamChunks";
+import { parseJsonBuffer, appendStreamToken } from "@/lib/stream/parseStreamChunks";
 import type { QAResponse } from "@/lib/api/types";
 import { AssistantSelect } from "./fields/AssistantSelect";
 import { CourseSelect } from "./fields/CourseSelect";
@@ -79,6 +79,7 @@ export const GeneratorForm = ({
           });
 
           const reader = response.body!.getReader();
+  
           const decoder = new TextDecoder();
           let accumulated = "";
           let buffer = "";
@@ -87,10 +88,9 @@ export const GeneratorForm = ({
             const { done, value } = await reader.read();
             if (done) break;
             buffer += decoder.decode(value, { stream: true });
-
             const { tokens, remaining } = parseJsonBuffer(buffer);
             for (const t of tokens) {
-              accumulated += t;
+              accumulated = appendStreamToken(accumulated, t);
             }
             buffer = remaining;
 
