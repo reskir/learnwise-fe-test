@@ -14,11 +14,11 @@ type ResultsPanelProps = {
 
 function StreamingDots() {
   return (
-    <div className="streaming-dots" style={{ display: "inline-flex", alignItems: "center", gap: 2 }}>
+    <span className="streaming-dots" style={{ display: "inline-flex", alignItems: "center", gap: 2 }}>
       <span />
       <span />
       <span />
-    </div>
+    </span>
   );
 }
 
