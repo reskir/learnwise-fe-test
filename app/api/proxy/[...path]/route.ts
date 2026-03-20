@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { cookies } from "next/headers";
 
 const BASE_API_URL =
   process.env.BASE_API_URL || "https://api.sandbox.learnwise.dev";
@@ -16,6 +17,16 @@ async function proxyRequest(
     );
   }
 
+  const cookieStore = await cookies();
+  const token = cookieStore.get("auth_token")?.value;
+
+  if (!token) {
+    return new Response(
+      JSON.stringify({ error: "Not authenticated" }),
+      { status: 401, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
   const { path } = await params;
   const target = new URL(`/${path.join("/")}`, BASE_API_URL);
 
@@ -26,11 +37,8 @@ async function proxyRequest(
 
   const headers: Record<string, string> = {
     "X-assistant-id": ASSISTANT_ID,
+    Authorization: `Bearer ${token}`,
   };
-
-  // Forward auth header from client
-  const auth = request.headers.get("Authorization");
-  if (auth) headers["Authorization"] = auth;
 
   // Forward content-type for POST/PUT/PATCH
   const contentType = request.headers.get("Content-Type");

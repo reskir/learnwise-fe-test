@@ -4,7 +4,6 @@ import { useRef } from "react";
 import { Button, Stack, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { createFormContext } from "@mantine/form";
-import { useAuth } from "@/lib/auth/AuthProvider";
 import { apiJson, apiClient, ApiError } from "@/lib/api/client";
 import { parseJsonBuffer } from "@/lib/stream/parseStreamChunks";
 import type { QAResponse } from "@/lib/api/types";
@@ -42,7 +41,6 @@ export const GeneratorForm = ({
   isGenerating,
   setIsGenerating,
 }: GeneratorFormProps) => {
-  const { token } = useAuth();
   const abortRef = useRef<AbortController | null>(null);
 
   const form = useGeneratorForm({
@@ -63,7 +61,6 @@ export const GeneratorForm = ({
   });
 
   const handleSubmit = async (values: GeneratorFormValues) => {
-    if (!token) return;
     setIsGenerating(true);
 
     try {
@@ -75,7 +72,7 @@ export const GeneratorForm = ({
           const controller = new AbortController();
           abortRef.current = controller;
 
-          const response = await apiClient(`/chat/temporary/qa-stream${queryParams}`, token, {
+          const response = await apiClient(`/chat/temporary/qa-stream${queryParams}`, {
             method: "POST",
             body: JSON.stringify({ message: values.prompt }),
             signal: controller.signal,
@@ -106,7 +103,6 @@ export const GeneratorForm = ({
         for (let i = 0; i < values.numQuestions; i++) {
           const result = await apiJson<QAResponse>(
             `/chat/temporary/qa${queryParams}`,
-            token,
             {
               method: "POST",
               body: JSON.stringify({ message: values.prompt }),

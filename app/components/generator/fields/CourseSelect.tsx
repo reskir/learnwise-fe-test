@@ -3,22 +3,18 @@
 import { useMemo } from "react";
 import { Select } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/lib/auth/AuthProvider";
 import { apiJson } from "@/lib/api/client";
 import { useGeneratorFormContext } from "../GeneratorForm";
 import type { Course } from "@/lib/api/types";
 
 export const CourseSelect = () =>{
-  const { token } = useAuth();
   const form = useGeneratorFormContext();
   const { data: courses } = useQuery({
     queryKey: ["courses"],
     queryFn: () =>
       apiJson<{ courses: Course[] }>(
-        `/chat/temporary/courses`,
-        token!
+        `/chat/temporary/courses`
       ),
-    enabled: !!token,
     select: (data) => data.courses,
   });
 

@@ -19,13 +19,11 @@ export class ApiError extends Error {
 
 export async function apiClient(
   path: string,
-  token: string,
   options: RequestInit = {}
 ) {
   const url = `/api/proxy${path}`;
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
     ...((options.headers as Record<string, string>) || {}),
   };
 
@@ -56,10 +54,8 @@ export async function apiClient(
 
 export async function apiJson<T>(
   path: string,
-  token?: string,
   options: RequestInit = {}
 ): Promise<T> {
-  if(!token) throw new Error("No auth token provided");
-  const response = await apiClient(path, token, options);
+  const response = await apiClient(path, options);
   return response.json() as Promise<T>;
 }

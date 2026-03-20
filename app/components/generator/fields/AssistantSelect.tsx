@@ -3,19 +3,16 @@
 import { useMemo } from "react";
 import { Select } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/lib/auth/AuthProvider";
 import { apiJson } from "@/lib/api/client";
 import { useGeneratorFormContext } from "../GeneratorForm";
 import type { Assistant } from "@/lib/api/types";
 
 export const AssistantSelect = () => {
-  const { token } = useAuth();
   const form = useGeneratorFormContext();
 
   const { data: assistants } = useQuery({
     queryKey: ["assistants"],
-    queryFn: () => apiJson<{ assistants: Assistant[] }>("/chat/temporary/assistants", token!),
-    enabled: !!token,
+    queryFn: () => apiJson<{ assistants: Assistant[] }>("/chat/temporary/assistants"),
     select: (data) => data.assistants,
   });
 

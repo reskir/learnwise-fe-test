@@ -13,7 +13,6 @@ import {
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { Streamdown } from "streamdown";
-import { useAuth } from "@/lib/auth/AuthProvider";
 import { apiJson } from "@/lib/api/client";
 import type { Generation, GenerationsFilters } from "@/lib/api/types";
 
@@ -24,7 +23,6 @@ type GenerationsListProps = {
 }
 
 export function GenerationsList({ filters }: GenerationsListProps) {
-  const { token } = useAuth();
   const [page, setPage] = useState(1);
 
   const queryParams = new URLSearchParams();
@@ -38,10 +36,8 @@ export function GenerationsList({ filters }: GenerationsListProps) {
     queryKey: ["generations", filters],
     queryFn: () =>
       apiJson<{ generations: Generation[] }>(
-        `/chat/temporary/generations?${queryParams.toString()}`,
-        token
+        `/chat/temporary/generations?${queryParams.toString()}`
       ),
-    enabled: !!token,
     select: (data) => data.generations,
   });
 

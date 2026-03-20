@@ -3,7 +3,6 @@
 import { Group, Select } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/lib/auth/AuthProvider";
 import { apiJson } from "@/lib/api/client";
 import type { Assistant, Course, GenerationsFilters } from "@/lib/api/types";
 
@@ -16,12 +15,9 @@ export function GenerationsFiltersPanel({
   filters,
   onChange,
 }: GenerationsFiltersProps) {
-  const { token } = useAuth();
-
   const { data: assistants } = useQuery({
     queryKey: ["assistants"],
-    queryFn: () => apiJson<{ assistants: Assistant[] }>("/chat/temporary/assistants", token),
-    enabled: !!token,
+    queryFn: () => apiJson<{ assistants: Assistant[] }>("/chat/temporary/assistants"),
     select: (data) => data.assistants,
   });
 
@@ -29,10 +25,8 @@ export function GenerationsFiltersPanel({
     queryKey: ["courses"],
     queryFn: () =>
       apiJson<{ courses: Course[] }>(
-        `/chat/temporary/courses`,
-        token!
+        `/chat/temporary/courses`
       ),
-    enabled: !!token,
     select: (data) => data.courses,
   });
 
