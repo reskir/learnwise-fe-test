@@ -1,43 +1,44 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useCallback, useRef } from "react";
 import { Box } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { GeneratorForm } from "@/app/components/generator/GeneratorForm";
 import { ResultsPanel } from "@/app/components/generator/ResultsPanel";
+import {
+  useQuizResults,
+  quizResultsStore,
+} from "@/lib/store/quizResultsStore";
 import type { QAResponse } from "@/lib/api/types";
 
 export default function GeneratorPage() {
-  const [results, setResults] = useState<QAResponse[]>([]);
-  const [streamingContent, setStreamingContent] = useState<string | null>(null);
-  const [isStreaming, setIsStreaming] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const { results, streamingContent, isStreaming, isGenerating } =
+    useQuizResults();
   const isMobile = useMediaQuery("(max-width: 62em)");
 
   const handleResult = useCallback((result: QAResponse) => {
-    setResults((prev) => [...prev, result]);
+    quizResultsStore.addResult(result);
   }, []);
 
   const handleStreamStart = useCallback(() => {
-    setStreamingContent("");
-    setIsStreaming(true);
+    quizResultsStore.streamStart();
   }, []);
 
   const streamContentRef = useRef<string>("");
 
   const handleStreamChunk = useCallback((content: string) => {
     streamContentRef.current = content;
-    setStreamingContent(content);
+    quizResultsStore.setStreamingContent(content);
   }, []);
 
   const handleStreamEnd = useCallback(() => {
     const content = streamContentRef.current;
     streamContentRef.current = "";
-    setStreamingContent(null);
-    setIsStreaming(false);
-    if (content) {
-      setResults((prev) => [...prev, { content }]);
-    }
+    quizResultsStore.streamEnd(content);
+  }, []);
+
+  const setIsGenerating = useCallback((v: boolean) => {
+    quizResultsStore.setIsGenerating(v);
   }, []);
 
   const hasResults = results.length > 0 || streamingContent != null;
