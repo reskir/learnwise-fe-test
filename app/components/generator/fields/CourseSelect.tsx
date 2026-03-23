@@ -15,7 +15,7 @@ export const CourseSelect = () => {
       data.courses.map((course) => ({
         value: course.id,
         label: course.name,
-        available: course.available,
+        disabled: !course.available,
       })),
   });
 
