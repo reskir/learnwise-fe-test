@@ -134,3 +134,52 @@ body {
   color: var(--muted-foreground);
   white-space: nowrap;
 }
+
+/* Streamdown markdown content — inherit theme colors for WCAG compliance */
+@media (prefers-color-scheme: dark) {
+  .mantine-Card-root h1,
+  .mantine-Card-root h2,
+  .mantine-Card-root h3,
+  .mantine-Card-root h4,
+  .mantine-Card-root h5,
+  .mantine-Card-root h6,
+  .mantine-Card-root p,
+  .mantine-Card-root li,
+  .mantine-Card-root td,
+  .mantine-Card-root th,
+  .mantine-Card-root span,
+  .mantine-Card-root blockquote {
+    color: var(--card-foreground);
+  }
+
+  .mantine-Card-root code {
+    color: var(--card-foreground);
+    background: var(--muted);
+  }
+
+  .mantine-Card-root pre {
+    background: var(--background);
+    color: var(--foreground);
+  }
+
+  .mantine-Card-root pre code {
+    background: transparent;
+  }
+
+  .mantine-Card-root a {
+    color: var(--primary);
+  }
+
+  .mantine-Card-root table {
+    border-color: var(--border);
+  }
+
+  .mantine-Card-root th,
+  .mantine-Card-root td {
+    border-color: var(--border);
+  }
+
+  .mantine-Card-root hr {
+    border-color: var(--border);
+  }
+}

@@ -20,7 +20,7 @@ export function Providers({ children }: { children: ReactNode }) {
   );
 
   return (
-    <MantineProvider>
+    <MantineProvider defaultColorScheme="auto">
       <Notifications position="top-right" />
       <QueryClientProvider client={queryClient}>
         <AuthProvider>{children}</AuthProvider>
