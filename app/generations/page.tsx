@@ -11,7 +11,7 @@ export default function GenerationsPage() {
 
   return (
     <Stack gap="md" maw={900} mx="auto">
-      <Text fw={700} size="lg" style={{ letterSpacing: "-0.02em" }}>
+      <Text component="h1" fw={700} size="lg" style={{ letterSpacing: "-0.02em" }}>
         Generation History
       </Text>
 

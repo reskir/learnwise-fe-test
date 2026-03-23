@@ -165,7 +165,7 @@ export const GeneratorForm = ({
           }}
         >
           <Stack gap="md">
-            <Text fw={700} size="lg" style={{ letterSpacing: "-0.02em" }}>
+            <Text component="h1" fw={700} size="lg" style={{ letterSpacing: "-0.02em" }}>
               Generate Quiz Questions
             </Text>
 

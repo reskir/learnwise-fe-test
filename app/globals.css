@@ -14,7 +14,7 @@
   --muted-foreground: #78716c;
   --accent: #f5f5f4;
   --accent-foreground: #1c1917;
-  --primary: #b45309;
+  --primary: #9a4408;
   --primary-light: #fef3c7;
   --primary-foreground: #ffffff;
   --card: #ffffff;
@@ -109,6 +109,47 @@ body {
 
 .result-card-enter {
   animation: card-enter 0.35s ease-out forwards;
+}
+
+/* WCAG 2.3.3 — Disable non-essential animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .stream-card-active {
+    animation: none;
+  }
+
+  .streaming-dots span {
+    animation: none;
+  }
+
+  .result-card-enter {
+    animation: none;
+  }
+
+  [data-sd-animate] {
+    animation: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* WCAG 2.4.7 / 2.4.11 — Visible focus indicators */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 
 

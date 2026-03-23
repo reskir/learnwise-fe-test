@@ -14,7 +14,7 @@ type ResultsPanelProps = {
 
 function StreamingDots() {
   return (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: 2 }}>
+    <span aria-hidden="true" style={{ display: "inline-flex", alignItems: "center", gap: 2 }}>
       <span />
       <span />
       <span />
@@ -106,6 +106,9 @@ export function ResultsPanel({
       <Box
         ref={scrollRef}
         onScroll={handleScroll}
+        tabIndex={0}
+        role="region"
+        aria-label="Scrollable results"
         style={{
           ...(inline
             ? { maxHeight: "60vh", overflowY: "auto" }
@@ -114,7 +117,7 @@ export function ResultsPanel({
           scrollbarColor: "var(--border) transparent",
         }}
       >
-        <div aria-live="polite" aria-busy={isStreaming}>
+        <div aria-live="polite" aria-busy={isStreaming} aria-label="Generated quiz results">
           <Stack gap="sm">
             {results.map((result, index) => (
               <Card

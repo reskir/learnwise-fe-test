@@ -84,9 +84,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   if (!isAuthenticated) {
     return (
-      <Center h="100vh">
+      <Center h="100vh" role="alert">
         <Stack align="center" gap="md">
-          <Text fw={700} size="lg">
+          <Text component="h1" fw={700} size="lg">
             Authentication failed
           </Text>
           <Text size="sm" c="dimmed">

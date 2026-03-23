@@ -10,7 +10,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
       <AppShell.Header>
         <Navigation />
       </AppShell.Header>
-      <AppShell.Main>{children}</AppShell.Main>
+      <AppShell.Main id="main-content">{children}</AppShell.Main>
     </AppShell>
   );
 }

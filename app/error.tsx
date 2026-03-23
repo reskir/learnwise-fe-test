@@ -10,9 +10,9 @@ export default function Error({
   reset: () => void;
 }) {
   return (
-    <Center h="60vh">
+    <Center h="60vh" role="alert">
       <Stack align="center" gap="md">
-        <Text fw={700} size="lg">
+        <Text component="h1" fw={700} size="lg">
           Something went wrong
         </Text>
         <Text size="sm" c="dimmed" maw={400} ta="center">

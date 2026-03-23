@@ -92,6 +92,7 @@ function FilterChips({
         >
           {chip.label}
           <svg
+            aria-hidden="true"
             viewBox="0 0 12 12"
             fill="none"
             stroke="currentColor"
@@ -228,6 +229,8 @@ export function GenerationsFiltersPanel({
               {activeCount > 0 && (
                 <Box
                   component="span"
+                  role="status"
+                  aria-label={`${activeCount} active filter${activeCount !== 1 ? "s" : ""}`}
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
@@ -249,6 +252,8 @@ export function GenerationsFiltersPanel({
               variant="subtle"
               size="xs"
               onClick={toggle}
+              aria-expanded={opened}
+              aria-controls="filter-fields"
               style={{ color: "var(--primary)" }}
             >
               {opened ? "Hide" : "Show"}
@@ -263,7 +268,7 @@ export function GenerationsFiltersPanel({
           />
 
           <Collapse in={opened}>
-            <Box mt="sm">{filterFields}</Box>
+            <Box mt="sm" id="filter-fields">{filterFields}</Box>
           </Collapse>
         </>
       ) : (
