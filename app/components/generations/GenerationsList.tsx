@@ -33,12 +33,7 @@ export function GenerationsList({ filters }: GenerationsListProps) {
       if (value) params.set(key, value);
     }
     return params.toString();
-  }, [
-    filters.assistant_id,
-    filters.course_id,
-    filters.before_date,
-    filters.after_date,
-  ]);
+  }, [filters]);
 
   const {
     data: generations,

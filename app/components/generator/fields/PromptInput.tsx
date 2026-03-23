@@ -40,13 +40,12 @@ export const PromptInput = () => {
     [debouncedFlush, form],
   );
 
-  // Sync from form → local when form resets or external changes
-  const formValue = form.getValues().prompt;
-  useEffect(() => {
-    if (formValue !== localValue && formValue === "") {
+  // Sync from form → local when form resets (prompt becomes "")
+  form.watch("prompt", ({ value }) => {
+    if (value === "") {
       setLocalValue("");
     }
-  }, [formValue]);
+  });
 
   const inputProps = form.getInputProps("prompt");
 
