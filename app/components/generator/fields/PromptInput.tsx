@@ -33,8 +33,11 @@ export const PromptInput = () => {
       const value = e.currentTarget.value;
       setLocalValue(value);
       debouncedFlush(value);
+      if (value.trim() && form.errors.prompt) {
+        form.clearFieldError("prompt");
+      }
     },
-    [debouncedFlush]
+    [debouncedFlush, form]
   );
 
   // Sync from form → local when form resets or external changes
@@ -45,20 +48,22 @@ export const PromptInput = () => {
     }
   }, [formValue]);
 
+  const inputProps = form.getInputProps("prompt");
+
   return (
     <Textarea
       label="Prompt"
       placeholder="Enter your prompt for generating quiz questions..."
       minRows={3}
-      required
-      aria-required
+      withAsterisk
+      key={form.key("prompt")}
       value={localValue}
       onChange={handleChange}
-      error={form.errors.prompt}
-      // Flush immediately on blur so form has latest value before submit
+      error={inputProps.error}
       onBlur={() => {
         debouncedFlush.cancel();
         flushToForm(localValue);
+        inputProps.onBlur?.();
       }}
     />
   );

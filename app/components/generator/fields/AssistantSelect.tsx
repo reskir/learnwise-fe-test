@@ -26,10 +26,10 @@ export const AssistantSelect = () => {
       label="Assistant"
       placeholder="Select assistant"
       data={selectData}
-      required
-      aria-required
-      error={isError ? "Failed to load assistants" : undefined}
+      withAsterisk
+      key={form.key("assistant_id")}
       {...form.getInputProps("assistant_id")}
+      error={isError ? "Failed to load assistants" : form.getInputProps("assistant_id").error}
     />
   );
 };

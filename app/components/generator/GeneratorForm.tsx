@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { Box, Button, Group, SimpleGrid, Stack, Text } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { createFormContext } from "@mantine/form";
+import { createFormContext, isNotEmpty, isInRange, hasLength } from "@mantine/form";
 import { apiJson, apiClient, ApiError } from "@/lib/api/client";
 import {
   parseJsonBuffer,
@@ -50,6 +50,7 @@ export const GeneratorForm = ({
   const isMobile = useMediaQuery("(max-width: 62em)");
 
   const form = useGeneratorForm({
+    mode: "uncontrolled",
     initialValues: {
       assistant_id: "",
       course_id: "",
@@ -57,12 +58,12 @@ export const GeneratorForm = ({
       numQuestions: 1,
       isStreamed: false,
     },
+    validateInputOnBlur: true,
     validate: {
-      assistant_id: (v) => (v ? null : "Assistant is required"),
-      course_id: (v) => (v ? null : "Course is required"),
-      prompt: (v) => (v.trim() ? null : "Prompt is required"),
-      numQuestions: (v) =>
-        v >= 1 && v <= 3 ? null : "Must be between 1 and 3",
+      assistant_id: isNotEmpty("Assistant is required"),
+      course_id: isNotEmpty("Course is required"),
+      prompt: hasLength({ min: 1 }, "Prompt is required"),
+      numQuestions: isInRange({ min: 1, max: 3 }, "Must be between 1 and 3"),
     },
   });
 

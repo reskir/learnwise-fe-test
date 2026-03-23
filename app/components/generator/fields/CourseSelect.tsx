@@ -28,10 +28,10 @@ export const CourseSelect = () =>{
       label="Course"
       placeholder="Select course"
       data={selectData}
-      required
-      aria-required
-      error={isError ? "Failed to load courses" : undefined}
+      withAsterisk
+      key={form.key("course_id")}
       {...form.getInputProps("course_id")}
+      error={isError ? "Failed to load courses" : form.getInputProps("course_id").error}
     />
   );
 };

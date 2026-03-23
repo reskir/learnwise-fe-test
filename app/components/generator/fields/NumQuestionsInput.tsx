@@ -11,6 +11,7 @@ export const NumQuestionsInput = () => {
       label="Number of questions"
       min={1}
       max={3}
+      key={form.key("numQuestions")}
       {...form.getInputProps("numQuestions")}
     />
   );

@@ -9,6 +9,7 @@ export const StreamToggle = () => {
   return (
     <Switch
       label="Enable streaming"
+      key={form.key("isStreamed")}
       {...form.getInputProps("isStreamed", { type: "checkbox" })}
     />
   );
