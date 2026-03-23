@@ -268,7 +268,9 @@ export function GenerationsFiltersPanel({
           />
 
           <Collapse in={opened}>
-            <Box mt="sm" id="filter-fields">{filterFields}</Box>
+            <Box mt="sm" id="filter-fields">
+              {filterFields}
+            </Box>
           </Collapse>
         </>
       ) : (

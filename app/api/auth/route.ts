@@ -7,13 +7,13 @@ export async function POST() {
   if (!process.env.ASSISTANT_ID) {
     return NextResponse.json(
       { error: "Server misconfiguration: ASSISTANT_ID is missing" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
   const url = new URL(
     "/chat/sign-in/injector",
-    process.env.BASE_API_URL || "https://api.sandbox.learnwise.dev"
+    process.env.BASE_API_URL || "https://api.sandbox.learnwise.dev",
   );
 
   const response = await fetch(url, {
@@ -31,7 +31,7 @@ export async function POST() {
   if (!response.ok) {
     return NextResponse.json(
       { error: "Authentication failed" },
-      { status: response.status }
+      { status: response.status },
     );
   }
 

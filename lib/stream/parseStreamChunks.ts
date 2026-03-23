@@ -6,7 +6,12 @@ type BlockContext = "table" | "list" | "none";
 function getBlockContext(line: string): BlockContext {
   const trimmed = line.trimStart();
   if (trimmed.startsWith("|")) return "table";
-  if (/^\d+\.[\s]/.test(trimmed) || trimmed.startsWith("- ") || trimmed.startsWith("* ")) return "list";
+  if (
+    /^\d+\.[\s]/.test(trimmed) ||
+    trimmed.startsWith("- ") ||
+    trimmed.startsWith("* ")
+  )
+    return "list";
   return "none";
 }
 
@@ -88,8 +93,10 @@ export function appendStreamToken(accumulated: string, token: string): string {
 
   // List items: \n between consecutive items, \n\n before the first
   const isListItem =
-    trimmed === "-" || trimmed === "*" ||
-    trimmed.startsWith("- ") || trimmed.startsWith("* ") ||
+    trimmed === "-" ||
+    trimmed === "*" ||
+    trimmed.startsWith("- ") ||
+    trimmed.startsWith("* ") ||
     /^\d+\.(\s|$)/.test(trimmed);
 
   if (isListItem) {

@@ -233,7 +233,7 @@ const EXPECTED_MARKDOWN = `# FAQ **Q:** How do I test streaming? **A:** Send a r
  */
 function simulateStreamRead(
   raw: string,
-  batchSizes: number[]
+  batchSizes: number[],
 ): { snapshots: string[]; final: string } {
   const encoder = new TextEncoder();
   const bytes = encoder.encode(raw);
@@ -468,15 +468,14 @@ const COURSE_EXPECTED_TEXT =
 describe("parseJsonBuffer", () => {
   it("extracts all tokens from a complete NDJSON buffer", () => {
     const { tokens, remaining } = parseJsonBuffer(
-      '{"content":"#"}{"content":" FAQ"}{"content":" hello"}'
+      '{"content":"#"}{"content":" FAQ"}{"content":" hello"}',
     );
     expect(tokens).toEqual(["#", " FAQ", " hello"]);
     expect(remaining).toBe("");
   });
 
   it("handles multi-line JSON objects (real API format)", () => {
-    const input =
-      '{\n    "content": "#"\n}{\n    "content": " FAQ"\n}';
+    const input = '{\n    "content": "#"\n}{\n    "content": " FAQ"\n}';
     const { tokens, remaining } = parseJsonBuffer(input);
     expect(tokens).toEqual(["#", " FAQ"]);
     expect(remaining).toBe("");
@@ -484,7 +483,7 @@ describe("parseJsonBuffer", () => {
 
   it("preserves incomplete JSON in remaining", () => {
     const { tokens, remaining } = parseJsonBuffer(
-      '{"content":"#"}{"content":" FA'
+      '{"content":"#"}{"content":" FA',
     );
     expect(tokens).toEqual(["#"]);
     expect(remaining).toBe('{"content":" FA');
@@ -504,7 +503,7 @@ describe("appendStreamToken", () => {
 
   it("uses single newline between table rows", () => {
     expect(appendStreamToken("| col1 | col2 |", " |")).toBe(
-      "| col1 | col2 |\n|"
+      "| col1 | col2 |\n|",
     );
   });
 
@@ -585,10 +584,10 @@ describe("parseStreamToMarkdown (full FAQ)", () => {
   it("has complete table rows on their own lines", () => {
     const markdown = parseStreamToMarkdown(RAW_STREAM);
     expect(markdown).toContain(
-      "\n\n| Approach | Latency | Throughput | Complexity | Use Case |"
+      "\n\n| Approach | Latency | Throughput | Complexity | Use Case |",
     );
     expect(markdown).toContain(
-      "\n| Streaming | Low | High | Medium | Real-time UIs |"
+      "\n| Streaming | Low | High | Medium | Real-time UIs |",
     );
   });
 
@@ -596,7 +595,9 @@ describe("parseStreamToMarkdown (full FAQ)", () => {
     const markdown = parseStreamToMarkdown(RAW_STREAM);
     const lines = markdown.split("\n").filter((l) => l.trim());
     const sep = lines.find((l) => l.startsWith("|---"));
-    expect(sep).toBe("|----------|---------|------------|------------|----------|");
+    expect(sep).toBe(
+      "|----------|---------|------------|------------|----------|",
+    );
   });
 });
 
@@ -656,7 +657,9 @@ describe("simulated streaming (chunk-by-chunk)", () => {
     const { snapshots } = simulateStreamRead(RAW_STREAM, sizes);
 
     for (let i = 1; i < snapshots.length; i++) {
-      expect(snapshots[i].length).toBeGreaterThanOrEqual(snapshots[i - 1].length);
+      expect(snapshots[i].length).toBeGreaterThanOrEqual(
+        snapshots[i - 1].length,
+      );
     }
   });
 });
@@ -671,7 +674,7 @@ describe("simulated streaming (chunk-by-chunk)", () => {
  */
 function simulateCourseStream(
   raw: string,
-  batchSizes: number[]
+  batchSizes: number[],
 ): { snapshots: string[]; final: string } {
   const encoder = new TextEncoder();
   const bytes = encoder.encode(raw);
@@ -734,7 +737,7 @@ describe("course-streaming parseJsonBuffer extraction", () => {
 describe("course-streaming simulated read loop", () => {
   it("produces correct text when chunks arrive one at a time", () => {
     const sizes = COURSE_STREAM_CHUNKS.map(
-      (c) => new TextEncoder().encode(c).length
+      (c) => new TextEncoder().encode(c).length,
     );
     const { final } = simulateCourseStream(COURSE_RAW_STREAM, sizes);
     expect(final).toBe(COURSE_EXPECTED_TEXT);
@@ -772,7 +775,7 @@ describe("course-streaming simulated read loop", () => {
       new TextEncoder().encode(COURSE_RAW_STREAM).length,
     ]);
     expect(final).toContain(
-      "$$E_{tokens} = \\frac{T_{total}}{C_{chunks}} \\times (1 - O_{overhead})$$"
+      "$$E_{tokens} = \\frac{T_{total}}{C_{chunks}} \\times (1 - O_{overhead})$$",
     );
   });
 
@@ -788,24 +791,21 @@ describe("course-streaming simulated read loop", () => {
 
   it("snapshots grow monotonically", () => {
     const sizes = COURSE_STREAM_CHUNKS.map(
-      (c) => new TextEncoder().encode(c).length
+      (c) => new TextEncoder().encode(c).length,
     );
     const { snapshots } = simulateCourseStream(COURSE_RAW_STREAM, sizes);
     for (let i = 1; i < snapshots.length; i++) {
       expect(snapshots[i].length).toBeGreaterThanOrEqual(
-        snapshots[i - 1].length
+        snapshots[i - 1].length,
       );
     }
   });
 
   it("every snapshot is a prefix of the final text", () => {
     const sizes = COURSE_STREAM_CHUNKS.map(
-      (c) => new TextEncoder().encode(c).length
+      (c) => new TextEncoder().encode(c).length,
     );
-    const { snapshots, final } = simulateCourseStream(
-      COURSE_RAW_STREAM,
-      sizes
-    );
+    const { snapshots, final } = simulateCourseStream(COURSE_RAW_STREAM, sizes);
     for (const snap of snapshots) {
       expect(final.startsWith(snap)).toBe(true);
     }

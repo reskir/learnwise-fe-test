@@ -60,12 +60,14 @@ export function Navigation({ children }: NavigationProps) {
                   borderRadius: "var(--radius)",
                   fontSize: 13,
                   fontWeight: pathname === link.href ? 600 : 500,
-                  color: pathname === link.href
-                    ? "var(--primary)"
-                    : "var(--muted-foreground)",
-                  background: pathname === link.href
-                    ? "var(--primary-light)"
-                    : "transparent",
+                  color:
+                    pathname === link.href
+                      ? "var(--primary)"
+                      : "var(--muted-foreground)",
+                  background:
+                    pathname === link.href
+                      ? "var(--primary-light)"
+                      : "transparent",
                   transition: "all 0.15s ease",
                 }}
                 aria-current={pathname === link.href ? "page" : undefined}

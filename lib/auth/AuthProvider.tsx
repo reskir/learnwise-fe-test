@@ -14,7 +14,7 @@ import { notifications } from "@mantine/notifications";
 type AuthContextValue = {
   isAuthenticated: boolean;
   refreshAuth: () => Promise<void>;
-}
+};
 
 const AuthContext = createContext<AuthContextValue>({
   isAuthenticated: false,

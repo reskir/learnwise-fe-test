@@ -7,13 +7,14 @@ const ASSISTANT_ID = process.env.ASSISTANT_ID;
 
 async function proxyRequest(
   request: NextRequest,
-  { params }: { params: Promise<{ path: string[] }> }
+  { params }: { params: Promise<{ path: string[] }> },
 ) {
-
   if (typeof ASSISTANT_ID !== "string") {
     return new Response(
-      JSON.stringify({ error: "Server misconfiguration: ASSISTANT_ID is missing" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      JSON.stringify({
+        error: "Server misconfiguration: ASSISTANT_ID is missing",
+      }),
+      { status: 500, headers: { "Content-Type": "application/json" } },
     );
   }
 
@@ -21,10 +22,10 @@ async function proxyRequest(
   const token = cookieStore.get("auth_token")?.value;
 
   if (!token) {
-    return new Response(
-      JSON.stringify({ error: "Not authenticated" }),
-      { status: 401, headers: { "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: "Not authenticated" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 
   const { path } = await params;
@@ -65,7 +66,7 @@ async function proxyRequest(
     console.error(`[proxy] ${request.method} ${target} failed:`, message);
     return new Response(
       JSON.stringify({ error: "Upstream request failed", detail: message }),
-      { status: 502, headers: { "Content-Type": "application/json" } }
+      { status: 502, headers: { "Content-Type": "application/json" } },
     );
   }
 

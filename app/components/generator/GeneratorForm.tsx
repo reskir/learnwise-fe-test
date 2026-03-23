@@ -4,7 +4,12 @@ import { useRef } from "react";
 import { Box, Button, Group, SimpleGrid, Stack, Text } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { createFormContext, isNotEmpty, isInRange, hasLength } from "@mantine/form";
+import {
+  createFormContext,
+  isNotEmpty,
+  isInRange,
+  hasLength,
+} from "@mantine/form";
 import { apiJson, apiClient, ApiError } from "@/lib/api/client";
 import {
   parseJsonBuffer,
@@ -166,7 +171,12 @@ export const GeneratorForm = ({
           }}
         >
           <Stack gap="md">
-            <Text component="h1" fw={700} size="lg" style={{ letterSpacing: "-0.02em" }}>
+            <Text
+              component="h1"
+              fw={700}
+              size="lg"
+              style={{ letterSpacing: "-0.02em" }}
+            >
               Generate Quiz Questions
             </Text>
 

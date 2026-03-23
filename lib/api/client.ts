@@ -7,7 +7,7 @@ export class ApiError extends Error {
     status: number,
     message: string,
     errorType: string,
-    params: Record<string, string>
+    params: Record<string, string>,
   ) {
     super(message);
     this.name = "ApiError";
@@ -17,10 +17,7 @@ export class ApiError extends Error {
   }
 }
 
-export async function apiClient(
-  path: string,
-  options: RequestInit = {}
-) {
+export async function apiClient(path: string, options: RequestInit = {}) {
   const url = `/api/proxy${path}`;
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -58,7 +55,7 @@ export async function apiClient(
 
 export async function apiJson<T>(
   path: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<T> {
   const response = await apiClient(path, options);
   return response.json() as Promise<T>;
