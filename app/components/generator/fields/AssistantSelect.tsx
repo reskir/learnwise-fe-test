@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import { Select } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { apiJson } from "@/lib/api/client";
@@ -12,24 +11,28 @@ export const AssistantSelect = () => {
 
   const { data: assistants, isError } = useQuery({
     queryKey: ["assistants"],
-    queryFn: () => apiJson<{ assistants: Assistant[] }>("/chat/temporary/assistants"),
-    select: (data) => data.assistants,
+    queryFn: () =>
+      apiJson<{ assistants: Assistant[] }>("/chat/temporary/assistants"),
+    select: (data) =>
+      data.assistants.map((assistant) => ({
+        value: assistant.id,
+        label: assistant.name,
+      })),
   });
-
-  const selectData = useMemo(
-    () => assistants?.map((a) => ({ value: a.id, label: a.name })) ?? [],
-    [assistants]
-  );
 
   return (
     <Select
       label="Assistant"
       placeholder="Select assistant"
-      data={selectData}
+      data={assistants ?? []}
       withAsterisk
       key={form.key("assistant_id")}
       {...form.getInputProps("assistant_id")}
-      error={isError ? "Failed to load assistants" : form.getInputProps("assistant_id").error}
+      error={
+        isError
+          ? "Failed to load assistants"
+          : form.getInputProps("assistant_id").error
+      }
     />
   );
 };

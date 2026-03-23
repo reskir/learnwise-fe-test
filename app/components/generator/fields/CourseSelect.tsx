@@ -1,37 +1,37 @@
 "use client";
 
-import { useMemo } from "react";
 import { Select } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { apiJson } from "@/lib/api/client";
 import { useGeneratorFormContext } from "../GeneratorForm";
 import type { Course } from "@/lib/api/types";
 
-export const CourseSelect = () =>{
+export const CourseSelect = () => {
   const form = useGeneratorFormContext();
   const { data: courses, isError } = useQuery({
     queryKey: ["courses"],
-    queryFn: () =>
-      apiJson<{ courses: Course[] }>(
-        `/chat/temporary/courses`
-      ),
-    select: (data) => data.courses,
+    queryFn: () => apiJson<{ courses: Course[] }>(`/chat/temporary/courses`),
+    select: (data) =>
+      data.courses.map((course) => ({
+        value: course.id,
+        label: course.name,
+        available: course.available,
+      })),
   });
-
-  const selectData = useMemo(
-    () => courses?.map((c) => ({ value: c.id, label: c.name, disabled: !c.available })) ?? [],
-    [courses]
-  );
 
   return (
     <Select
       label="Course"
       placeholder="Select course"
-      data={selectData}
+      data={courses ?? []}
       withAsterisk
       key={form.key("course_id")}
       {...form.getInputProps("course_id")}
-      error={isError ? "Failed to load courses" : form.getInputProps("course_id").error}
+      error={
+        isError
+          ? "Failed to load courses"
+          : form.getInputProps("course_id").error
+      }
     />
   );
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useMemo, useRef } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { Textarea } from "@mantine/core";
 import debounce from "lodash.debounce";
 import { useGeneratorFormContext } from "../GeneratorForm";
@@ -15,12 +15,12 @@ export const PromptInput = () => {
     (value: string) => {
       form.setFieldValue("prompt", value);
     },
-    [form]
+    [form],
   );
 
   const debouncedFlush = useMemo(
     () => debounce((value: string) => flushToForm(value), DEBOUNCE_MS),
-    [flushToForm]
+    [flushToForm],
   );
 
   // Cancel debounce on unmount
@@ -37,7 +37,7 @@ export const PromptInput = () => {
         form.clearFieldError("prompt");
       }
     },
-    [debouncedFlush, form]
+    [debouncedFlush, form],
   );
 
   // Sync from form → local when form resets or external changes
