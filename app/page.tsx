@@ -41,6 +41,10 @@ export default function GeneratorPage() {
     quizResultsStore.setIsGenerating(v);
   }, []);
 
+  const handleRemove = useCallback((index: number) => {
+    quizResultsStore.removeResult(index);
+  }, []);
+
   const hasResults = results.length > 0 || streamingContent != null;
 
   return (
@@ -89,6 +93,7 @@ export default function GeneratorPage() {
             streamingContent={streamingContent}
             isStreaming={isStreaming}
             inline={!!isMobile}
+            onRemove={handleRemove}
           />
         </Box>
       )}

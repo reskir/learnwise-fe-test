@@ -1,15 +1,19 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
-import { Card, Stack, Text, Center, Box } from "@mantine/core";
+import { ActionIcon, Card, Stack, Text, Center, Box } from "@mantine/core";
 import { Streamdown } from "streamdown";
+import { createMathPlugin } from "@streamdown/math";
 import type { QAResponse } from "@/lib/api/types";
+
+const math = createMathPlugin({ singleDollarTextMath: true });
 
 type ResultsPanelProps = {
   results: QAResponse[];
   streamingContent: string | null;
   isStreaming: boolean;
   inline?: boolean;
+  onRemove?: (index: number) => void;
 };
 
 function StreamingDots() {
@@ -30,6 +34,7 @@ export function ResultsPanel({
   streamingContent,
   isStreaming,
   inline = false,
+  onRemove,
 }: ResultsPanelProps) {
   const hasContent = results.length > 0 || streamingContent != null;
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -135,9 +140,38 @@ export function ResultsPanel({
                 style={{
                   background: "var(--card)",
                   border: "1px solid var(--border)",
+                  position: "relative",
                 }}
               >
-                <Streamdown mode="static">{result.content}</Streamdown>
+                {onRemove && (
+                  <ActionIcon
+                    variant="subtle"
+                    color="gray"
+                    size="sm"
+                    onClick={() => onRemove(index)}
+                    aria-label="Remove result"
+                    style={{
+                      position: "absolute",
+                      top: 8,
+                      right: 8,
+                    }}
+                  >
+                    <svg
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      width={14}
+                      height={14}
+                    >
+                      <path d="M3 3l6 6M9 3l-6 6" />
+                    </svg>
+                  </ActionIcon>
+                )}
+                <Streamdown mode="static" plugins={{ math }}>
+                  {result.content}
+                </Streamdown>
               </Card>
             ))}
 
@@ -153,7 +187,11 @@ export function ResultsPanel({
                   border: `1px solid ${isStreaming ? "var(--stream-border)" : "var(--border)"}`,
                 }}
               >
-                <Streamdown mode="streaming" isAnimating={isStreaming}>
+                <Streamdown
+                  mode="streaming"
+                  isAnimating={isStreaming}
+                  plugins={{ math }}
+                >
                   {streamingContent}
                 </Streamdown>
                 {isStreaming && streamingContent === "" && (

@@ -17,6 +17,7 @@ export const CourseSelect = () => {
         label: course.name,
         disabled: !course.available,
       })),
+    staleTime: 5 * 60 * 1000,
   });
 
   return (

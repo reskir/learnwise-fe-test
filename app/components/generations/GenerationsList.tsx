@@ -15,8 +15,11 @@ import {
 } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
 import { Streamdown } from "streamdown";
+import { createMathPlugin } from "@streamdown/math";
 import { apiJson } from "@/lib/api/client";
 import type { Generation, GenerationsFilters } from "@/lib/api/types";
+
+const math = createMathPlugin({ singleDollarTextMath: true });
 
 const PAGE_SIZE = 5;
 
@@ -164,7 +167,7 @@ export function GenerationsList({ filters }: GenerationsListProps) {
             </Text>
           </Group>
 
-          <Streamdown mode="static">
+          <Streamdown mode="static" plugins={{ math }}>
             {gen.generation.length > 300
               ? gen.generation.slice(0, 300) + "..."
               : gen.generation}

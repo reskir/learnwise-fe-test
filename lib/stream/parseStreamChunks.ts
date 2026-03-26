@@ -64,6 +64,26 @@ function isBlockStart(trimmed: string): boolean {
  * - Code fences (```): \n\n before
  */
 export function appendStreamToken(accumulated: string, token: string): string {
+  // If the token contains newlines, split and process each segment
+  // so that block-level detection works for content after \n boundaries.
+  if (token.includes("\n")) {
+    const parts = token.split("\n");
+    let result = accumulated;
+    for (let i = 0; i < parts.length; i++) {
+      if (i > 0) {
+        result += "\n";
+      }
+      if (parts[i]) {
+        result = appendSingleToken(result, parts[i]);
+      }
+    }
+    return result;
+  }
+
+  return appendSingleToken(accumulated, token);
+}
+
+function appendSingleToken(accumulated: string, token: string): string {
   const trimmed = token.trimStart();
   if (!trimmed) return accumulated + token;
   if (accumulated.length === 0) return trimmed;
@@ -71,6 +91,11 @@ export function appendStreamToken(accumulated: string, token: string): string {
   // Inside a $$ math block — append everything as-is (no block detection)
   if (isInsideMathBlock(accumulated) && !trimmed.startsWith("$$")) {
     return accumulated + token;
+  }
+
+  // Just exited a $$ math block — add \n\n before next content
+  if (accumulated.endsWith("$$") && !isInsideMathBlock(accumulated)) {
+    return accumulated + "\n\n" + trimmed;
   }
 
   const currentLine = lastLine(accumulated);
@@ -130,7 +155,7 @@ export function parseJsonBuffer(buffer: string): {
       try {
         const chunk = JSON.parse(buffer.slice(startIndex, j + 1));
         if (chunk.content) {
-          tokens.push(chunk.content);
+          tokens.push(chunk.content.replace(/\\n(?![a-z])/g, "\n"));
         }
         startIndex = j + 1;
       } catch {

@@ -18,6 +18,7 @@ export const AssistantSelect = () => {
         value: assistant.id,
         label: assistant.name,
       })),
+    staleTime: 5 * 60 * 1000,
   });
 
   return (

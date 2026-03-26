@@ -135,12 +135,14 @@ export function GenerationsFiltersPanel({
     queryFn: () =>
       apiJson<{ assistants: Assistant[] }>("/chat/temporary/assistants"),
     select: (data) => data.assistants,
+    staleTime: 5 * 60 * 1000,
   });
 
   const { data: courses } = useQuery({
     queryKey: ["courses"],
     queryFn: () => apiJson<{ courses: Course[] }>(`/chat/temporary/courses`),
     select: (data) => data.courses,
+    staleTime: 5 * 60 * 1000,
   });
 
   const activeCount = useMemo(
